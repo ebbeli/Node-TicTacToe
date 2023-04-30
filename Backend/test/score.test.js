@@ -10,10 +10,11 @@ const { ObjectId } = require("mongodb");
 const { players } = require("../Controllers/score-controller");
 
 const expect = require("chai").expect;
-describe("Match API", () => {
+describe("Score API", () => {
   beforeAll(async () => {
     await Score.deleteMany({});
     await Player.deleteMany({});
+
     const passwordHash1 = await bcrypt.hash("secret", 10);
     const passwordHash2 = await bcrypt.hash("secret", 10);
 
