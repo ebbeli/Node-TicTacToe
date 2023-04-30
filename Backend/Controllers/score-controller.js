@@ -18,10 +18,7 @@ const updateScore = async (req, res, next) => {
     savedScore = await score.save();
   }
   await Player.updateOne({ _id: id }, { score: savedScore._id })
-    .then((docs) => {
-      console.log("Updated: ", docs);
-    })
-    .catch((err) => next(err));
+  .catch((err) => next(err));
 
   res.status(201).json(savedScore);
 };
@@ -37,7 +34,6 @@ const getAllScores = async (req, res, next) => {
 
 const getByPlayersName = async (req, res, next) => {
   const body = req.body;
-  console.log(body);
   await Player.findOne({ name: body.name })
     .populate("score")
     .then((player) => {

@@ -8,10 +8,8 @@ const login = async (req, res) => {
   const player = await Player.findOne({ name });
   const passwordCorrect =
     player === null ? false : await bcrypt.compare(password, player.password);
-  console.log(player);
-  console.log(passwordCorrect);
   if (!(player && passwordCorrect)) {
-    return response.status(401).json({
+    return res.status(401).json({
       error: "Invalid username or password",
     });
   }

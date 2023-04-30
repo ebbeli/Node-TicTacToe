@@ -71,8 +71,6 @@ const getPlayers = async (req, res, next) => {
     })
     .catch((err) => next(err));
 
-  console.log("To Return:", matchesToReturn);
-
   res.status(201).json(matchesToReturn);
 };
 
