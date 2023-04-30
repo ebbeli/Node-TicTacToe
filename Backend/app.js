@@ -9,7 +9,6 @@ const bodyParser = require("body-parser");
 const playerRouter = require("./Routes/player-route");
 const matchRouter = require("./Routes/match-route");
 const scoreRouter = require("./Routes/score-route");
-
 const middleware = require("./Config/middleware");
 
 mongoose.set("strictQuery", false);
