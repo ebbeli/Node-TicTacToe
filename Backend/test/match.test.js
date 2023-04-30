@@ -49,13 +49,19 @@ describe("Match API", () => {
   test("Create new Match", async () => {
     const playersBefore = await helper.playersFound();
 
-    const newPlayer = {
+    const id1 = await Player.findOne({ name: "pelaaja1" }).select(_id);
+    const id2 = await Player.findOne({ name: "pelaaja2" }).select(_id);
+
+    const newMatch = {
       name: "matsi",
+      moves: [],
+      player1: 1,
+      player2: 2,
     };
 
     await api
-      .post("/players/create")
-      .send(newPlayer)
+      .post("/matches/new")
+      .send(newMatch)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 

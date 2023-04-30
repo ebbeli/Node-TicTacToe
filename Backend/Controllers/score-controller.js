@@ -56,10 +56,10 @@ const getHighScores = async (req, res) => {
     });
 };
 
-module.update = updateScore;
-module.getAll = getAllScores;
-module.players = getByPlayersName;
-module.highScores = getHighScores;
+exports.update = updateScore;
+exports.getAll = getAllScores;
+exports.players = getByPlayersName;
+exports.highScores = getHighScores;
 /*
 const createScore = async (req, res) => {
   let body = req.body;

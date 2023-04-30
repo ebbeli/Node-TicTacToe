@@ -1,14 +1,15 @@
 const express = require("express");
 const app = express();
-const playerRoutes = require("./Routes/player-route");
 const config = require("./Config/config");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const logger = require("./Config/logger");
-require("express-async-errors");
 const bodyParser = require("body-parser");
 
 const playerRouter = require("./Routes/player-route");
+const matchRouter = require("./Routes/match-route");
+const scoreRouter = require("./Routes/score-route");
+
 const middleware = require("./Config/middleware");
 
 mongoose.set("strictQuery", false);
@@ -29,10 +30,12 @@ app.use(bodyParser.json());
 app.use(cors({ origin: "*" }));
 app.use(express.static("build"));
 app.use(middleware.reqLogger);
+app.use(middleware.errorHandler);
 
-app.use("/players", playerRoutes);
+app.use("/players", playerRouter);
+app.use("/matches", matchRouter);
+app.use("/scores", scoreRouter);
 
 app.use(middleware.unknownEndpoint);
-app.use(middleware.errorHandler);
 
 module.exports = app;

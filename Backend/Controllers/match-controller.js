@@ -79,10 +79,10 @@ const getPlayers = async (req, res) => {
   res.status().json(matchesToReturn);
 };
 
-module.create = createMatch;
-module.updateMoves = updateMoves;
-module.getMoves = getMoves;
-module.getPlayers = getPlayers;
+exports.create = createMatch;
+exports.updateMoves = updateMoves;
+exports.getMoves = getMoves;
+exports.getPlayers = getPlayers;
 
 /*
 const getMatchById = async (req, res) => {
@@ -101,6 +101,6 @@ const getMatchByName = async (req, res) => {
   res.status().json(foundMatch);
 };
 
-module.byId = getMatchById;
-module.byName = getMatchByName;
+exports.byId = getMatchById;
+exports.byName = getMatchByName;
 */

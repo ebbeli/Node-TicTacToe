@@ -22,8 +22,7 @@ describe("Player API", () => {
   });
 
   test("Create new player", async () => {
-    const playersBefore = await helper.playersFound();
-
+    const playersBefore = await helper.whatFound(Player);
     const newPlayer = {
       name: "ebeli",
       password: "salainen",
@@ -36,7 +35,7 @@ describe("Player API", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    const playersAfter = await helper.playersFound();
+    const playersAfter = await helper.whatFound(Player);
     expect(playersAfter.length).equal(playersBefore.length + 1);
 
     const players = playersAfter.map((p) => p.name);
