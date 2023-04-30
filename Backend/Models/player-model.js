@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const unique = require("mongoose-unique-validator");
 
 const playerSchema = mongoose.Schema({
   name: { type: String, required: true, unique: true },

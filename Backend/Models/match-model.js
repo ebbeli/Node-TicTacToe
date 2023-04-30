@@ -1,6 +1,4 @@
-const { ObjectId, Timestamp } = require("bson");
 const mongoose = require("mongoose");
-const unique = require("mongoose-unique-validator");
 
 const moveSchema = mongoose.Schema({
   x: Number,

@@ -1,9 +1,7 @@
-const mongoose = require("mongoose");
 const Player = require("../Models/player-model");
-const Match = require("../Models/match-model");
 const Score = require("../Models/score-model");
 
-const updateScore = async (req, res) => {
+const updateScore = async (req, res, next) => {
   const { id } = req.body;
   let savedScore;
   let player = await Player.findOne({ _id: id });
@@ -23,25 +21,21 @@ const updateScore = async (req, res) => {
     .then((docs) => {
       console.log("Updated: ", docs);
     })
-    .catch((err) => {
-      err.status(400).json(new Error(err));
-    });
+    .catch((err) => next(err));
 
   res.status(201).json(savedScore);
 };
 
-const getAllScores = async (req, res) => {
+const getAllScores = async (req, res, next) => {
   await Score.find({})
     .populate("player")
     .then((scores) => {
       res.status(201).json(scores);
     })
-    .catch((err) => {
-      res.status(400).json("Error getting scores");
-    });
+    .catch((err) => next(err));
 };
 
-const getByPlayersName = async (req, res) => {
+const getByPlayersName = async (req, res, next) => {
   const body = req.body;
   console.log(body);
   await Player.findOne({ name: body.name })
@@ -49,12 +43,10 @@ const getByPlayersName = async (req, res) => {
     .then((player) => {
       res.status(201).json(player.score);
     })
-    .catch((err) => {
-      res.status(404).json("Name not found");
-    });
+    .catch((err) => next(err));
 };
 
-const getHighScores = async (req, res) => {
+const getHighScores = async (req, res, next) => {
   await Score.find({})
     .populate("player")
     .sort({ wins: -1 })
@@ -62,9 +54,7 @@ const getHighScores = async (req, res) => {
       const topFive = scores.slice(0, 4);
       res.status(201).json(topFive);
     })
-    .catch((err) => {
-      res.status(400).json("Error getting high scores");
-    });
+    .catch((err) => next(err));
 };
 
 exports.update = updateScore;

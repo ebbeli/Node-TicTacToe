@@ -1,4 +1,3 @@
-const { ObjectId, Timestamp } = require("bson");
 const mongoose = require("mongoose");
 
 const scoreSchema = mongoose.Schema({

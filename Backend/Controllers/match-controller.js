@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Player = require("../Models/player-model");
 const Match = require("../Models/match-model");
 
@@ -28,10 +27,12 @@ const createMatch = async (req, res) => {
   res.status(201).json(savedMatch);
 };
 
-const updateMoves = async (req, res) => {
+const updateMoves = async (req, res, next) => {
   const body = req.body;
 
-  const updatedMatch = await Match.findById({ _id: body.id });
+  const updatedMatch = await Match.findById({ _id: body.id }).catch((err) =>
+    next(err)
+  );
 
   updatedMatch.moves = updatedMatch.moves.concat(body.move);
 
@@ -42,17 +43,17 @@ const updateMoves = async (req, res) => {
   res.status(201).json(savedMatch);
 };
 
-const getMoves = async (req, res) => {
+const getMoves = async (req, res, next) => {
   const body = req.body;
 
-  const foundMoves = await Match.findById({ _id: body.id }).select(
-    "moves lastMoveBy"
-  );
+  const foundMoves = await Match.findById({ _id: body.id })
+    .select("moves lastMoveBy")
+    .catch((err) => next(err));
 
   res.status(201).json(foundMoves);
 };
 
-const getPlayers = async (req, res) => {
+const getPlayers = async (req, res, next) => {
   const { id } = req.body;
   const matchesToReturn = { p1: [], p2: [] };
 
@@ -61,18 +62,14 @@ const getPlayers = async (req, res) => {
     .then((matches) => {
       matchesToReturn.p1 = matches;
     })
-    .catch((err) => {
-      res.status(400).json("Error populating matches");
-    });
+    .catch((err) => next(err));
 
   await Match.find({ player2: id })
     .populate("player1", "name")
     .then((matches) => {
       matchesToReturn.p2 = matches;
     })
-    .catch((err) => {
-      res.status(400).json("Error populating matches");
-    });
+    .catch((err) => next(err));
 
   console.log("To Return:", matchesToReturn);
 

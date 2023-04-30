@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
 const Player = require("../Models/player-model");
-const mongoose = require("mongoose");
 
 const createPlayer = async (req, res) => {
   let { name, password, sign } = req.body;
@@ -19,35 +18,28 @@ const createPlayer = async (req, res) => {
   res.status(201).json(savedPlayer);
 };
 
-const getPlayerById = async (req, res) => {
+const getPlayerById = async (req, res, next) => {
   const { id } = req.body;
 
-  const player = await Player.findOne({ _id: id });
+  const player = await Player.findOne({ _id: id }).catch((err) => next(err));
 
   res.status(201).json(player);
 };
 
-const getPlayerByName = async (req, res) => {
+const getPlayerByName = async (req, res, next) => {
   console.log(req.body);
 
   const { name } = req.body;
-
-  console.log(name);
-  const player = await Player.findOne({ name: name });
+  const player = await Player.findOne({ name: name }).catch((err) => next(err));
 
   res.status(201).json(player);
 };
 
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
   let players = [];
-  players = await Player.find({});
-  console.log(players);
-  res.status(201).json(players);
-};
+  players = await Player.find({}).catch((err) => next(err));
 
-const addMatch = async (req, res) => {
-  console.log(req.body);
-  const { playerId, matchId } = req.body;
+  res.status(201).json(players);
 };
 
 exports.createPlayer = createPlayer;

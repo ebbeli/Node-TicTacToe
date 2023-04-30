@@ -23,18 +23,16 @@ mongoose
   .catch((error) => {
     logger.error("error connecting to db:", error.message);
   });
-
-app.use(bodyParser.json());
-
 app.use(cors({ origin: "*" }));
 app.use(express.static("build"));
+app.use(bodyParser.json());
 app.use(middleware.reqLogger);
-app.use(middleware.errorHandler);
 
 app.use("/players", playerRouter);
 app.use("/matches", matchRouter);
 app.use("/scores", scoreRouter);
 
 app.use(middleware.unknownEndpoint);
+app.use(middleware.errorHandler);
 
 module.exports = app;
