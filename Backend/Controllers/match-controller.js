@@ -34,7 +34,8 @@ const updateMoves = async (req, res) => {
   const updatedMatch = await Match.findById({ _id: body.id });
 
   updatedMatch.moves = updatedMatch.moves.concat(body.move);
-  updatedMatch.lastMoveBy = body.name;
+
+  updatedMatch.lastMoveBy = body.lastMoveBy;
 
   const savedMatch = await updatedMatch.save();
 
@@ -42,36 +43,40 @@ const updateMoves = async (req, res) => {
 };
 
 const getMoves = async (req, res) => {
-  const { id } = req.body;
+  const body = req.body;
 
-  const foundMoves = await Match.findById({ _id: id }).select(
+  const foundMoves = await Match.findById({ _id: body.id }).select(
     "moves lastMoveBy"
   );
 
-  res.status().json(foundMoves);
+  res.status(201).json(foundMoves);
 };
 
 const getPlayers = async (req, res) => {
   const { id } = req.body;
-  const matchesToReturn = { p1, p2 };
+  const matchesToReturn = { p1: [], p2: [] };
 
   await Match.find({ player1: id })
     .populate("player2", "name")
-    .exec(function (err, matches) {
-      if (err) throw err;
+    .then((matches) => {
       matchesToReturn.p1 = matches;
+    })
+    .catch((err) => {
+      res.status(400).json("Error populating matches");
     });
 
   await Match.find({ player2: id })
     .populate("player1", "name")
-    .exec(function (err, matches) {
-      if (err) throw err;
+    .then((matches) => {
       matchesToReturn.p2 = matches;
+    })
+    .catch((err) => {
+      res.status(400).json("Error populating matches");
     });
 
   console.log("To Return:", matchesToReturn);
 
-  res.status().json(matchesToReturn);
+  res.status(201).json(matchesToReturn);
 };
 
 exports.create = createMatch;

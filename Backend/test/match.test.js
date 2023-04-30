@@ -5,7 +5,9 @@ const app = require("../app");
 const api = supertest(app);
 const Player = require("../Models/player-model");
 const Match = require("../Models/match-model");
+
 const helper = require("./testHelper");
+const { ObjectId } = require("mongodb");
 
 const expect = require("chai").expect;
 describe("Match API", () => {
@@ -18,18 +20,20 @@ describe("Match API", () => {
     const player1 = new Player({
       name: "pelaaja1",
       password: passwordHash1,
+      matches: [],
       sign: "A",
     });
 
     const player2 = new Player({
       name: "pelaaja2",
       password: passwordHash2,
+      matches: [],
       sign: "B",
     });
 
-    await player1.save();
+    const savedPlayer1 = await player1.save();
 
-    await player2.save();
+    const savedPlayer2 = await player2.save();
 
     const player1ToSave = await Player.findOne({ name: "pelaaja1" });
     const player2ToSave = await Player.findOne({ name: "pelaaja2" });
@@ -37,15 +41,19 @@ describe("Match API", () => {
     const match = new Match({
       name: "peli",
       moves: [
-        [2, 2],
-        [2, 1],
+        { x: 2, y: 2 },
+        { x: 2, y: 1 },
       ],
       result: "In Progress",
       player1: player1ToSave._id,
       player2: player2ToSave._id,
     });
 
-    await match.save();
+    const savedMatch = await match.save();
+    savedPlayer1.matches = savedPlayer1.matches.concat(savedMatch._id);
+    savedPlayer2.matches = savedPlayer2.matches.concat(savedMatch._id);
+    await savedPlayer1.save();
+    await savedPlayer2.save();
   });
 
   test("Create new Match", async () => {
@@ -56,7 +64,7 @@ describe("Match API", () => {
 
     const newMatch = {
       name: "matsi",
-      moves: [],
+      moves: [{ x: 2, y: 3 }],
       player1: id1,
       player2: id2,
     };
@@ -77,21 +85,62 @@ describe("Match API", () => {
   test("Update moves", async () => {
     const matchToFind = await Match.findOne({ name: "matsi" });
 
-    console.log("Player to Find", matchToFind);
+    console.log("Match to Update: ", matchToFind);
     const id = matchToFind._id;
-    const move = [1, 2];
-    const lastMoveBy = "pelaaja1";
+    const move = { x: 1, y: 2 };
+    const lastMoveBy = 1;
+    console.log(id, move, lastMoveBy);
 
     await api
-      .get("/matches/id")
+      .put("/matches/update")
       .send({ id, move, lastMoveBy })
       .expect(201)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
+        console.log(res.body.moves);
+        console.log(res.body);
         expect(res.body.moves.length).equal(matchToFind.moves.length + 1);
-        expect(res.lastMoveBy).equal(lastMoveBy);
+        expect(res.body.lastMoveBy).equal(lastMoveBy);
       });
   });
+
+  test("'Get moves", async () => {
+    const matchToFind = await Match.findOne({ name: "matsi" });
+
+    console.log("Matches moves to get: ", matchToFind);
+
+    await api
+      .get("/matches/moves")
+      .send({ id: matchToFind._id })
+      .expect(201)
+      .expect("Content-Type", /application\/json/)
+      .expect(function (res) {
+        console.log(res.body);
+        expect(res.body.moves.length).equal(matchToFind.moves.length);
+        expect(res.body.lastMoveBy).equal(matchToFind.lastMoveBy);
+      });
+  });
+});
+
+test("'Get players matches", async () => {
+  const player = await Player.findOne({ name: "pelaaja1" });
+
+  console.log("Player matches to get: ", player);
+
+  await api
+    .get("/matches/players")
+    .send({ id: player._id })
+    .expect(201)
+    .expect("Content-Type", /application\/json/)
+    .expect(function (res) {
+      const matches = res.body.p1.concat(res.body.p2);
+      let matchIds = [];
+      matches.forEach((match) => {
+        matchIds.push(match.id);
+      });
+      expect(matches.length).equal(player.matches.length);
+      expect(matchIds[0]).equals(String(player.matches[0]));
+    });
 });
 
 afterAll((done) => {

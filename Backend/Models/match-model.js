@@ -2,12 +2,17 @@ const { ObjectId, Timestamp } = require("bson");
 const mongoose = require("mongoose");
 const unique = require("mongoose-unique-validator");
 
+const moveSchema = mongoose.Schema({
+  x: Number,
+  y: Number,
+});
+
 const matchSchema = mongoose.Schema(
   {
     name: { type: String, unique: true },
-    moves: { type: Array, require: true },
+    moves: [moveSchema],
     result: String,
-    lastMoveBy: String,
+    lastMoveBy: Number,
     player1: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Player",
