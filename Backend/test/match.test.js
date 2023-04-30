@@ -32,12 +32,7 @@ describe("Match API", () => {
     });
 
     const savedPlayer1 = await player1.save();
-
     const savedPlayer2 = await player2.save();
-
-    const player1ToSave = await Player.findOne({ name: "pelaaja1" });
-    const player2ToSave = await Player.findOne({ name: "pelaaja2" });
-    console.log(player1ToSave._id);
     const match = new Match({
       name: "peli",
       moves: [
@@ -45,8 +40,8 @@ describe("Match API", () => {
         { x: 2, y: 1 },
       ],
       result: "In Progress",
-      player1: player1ToSave._id,
-      player2: player2ToSave._id,
+      player1: savedPlayer1._id,
+      player2: savedPlayer2._id,
     });
 
     const savedMatch = await match.save();

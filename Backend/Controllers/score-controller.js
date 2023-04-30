@@ -8,7 +8,7 @@ const updateScore = async (req, res) => {
   let savedScore;
   let player = await Player.findOne({ _id: id });
 
-  if (player.populated("score")) {
+  if (player.score) {
     const score = await Score.findById(player.score._id);
     score.wins = score.wins + 1;
     savedScore = await score.save();
@@ -18,30 +18,39 @@ const updateScore = async (req, res) => {
       player: player._id,
     });
     savedScore = await score.save();
-    player.score = savedScore._id;
-    await player.save;
   }
+  await Player.updateOne({ _id: id }, { score: savedScore._id })
+    .then((docs) => {
+      console.log("Updated: ", docs);
+    })
+    .catch((err) => {
+      err.status(400).json(new Error(err));
+    });
+
   res.status(201).json(savedScore);
 };
 
 const getAllScores = async (req, res) => {
-  body = req.body;
-  const scores = await Score.find({})
-    .populate()
-    .exec(function (err, scores) {
-      if (err) throw err;
+  await Score.find({})
+    .populate("player")
+    .then((scores) => {
       res.status(201).json(scores);
+    })
+    .catch((err) => {
+      res.status(400).json("Error getting scores");
     });
 };
 
 const getByPlayersName = async (req, res) => {
-  const { name } = req.body;
-
-  await Player.findOne({ name: name })
+  const body = req.body;
+  console.log(body);
+  await Player.findOne({ name: body.name })
     .populate("score")
-    .exec(function (err, player) {
-      if (err) throw err;
+    .then((player) => {
       res.status(201).json(player.score);
+    })
+    .catch((err) => {
+      res.status(404).json("Name not found");
     });
 };
 
@@ -49,10 +58,12 @@ const getHighScores = async (req, res) => {
   await Score.find({})
     .populate("player")
     .sort({ wins: -1 })
-    .exec(function (err, scores) {
-      if (err) throw err;
+    .then((scores) => {
       const topFive = scores.slice(0, 4);
       res.status(201).json(topFive);
+    })
+    .catch((err) => {
+      res.status(400).json("Error getting high scores");
     });
 };
 
