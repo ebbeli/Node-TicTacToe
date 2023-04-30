@@ -22,7 +22,7 @@ const matchSchema = mongoose.Schema(
 
 matchSchema.set("toJSON", {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toSring();
+    returnedObject.id = returnedObject._id.$oid;
     delete returnedObject._id;
     delete returnedObject.__v;
   },

@@ -7,7 +7,6 @@ const scoreSchema = mongoose.Schema({
   player: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Player",
-    unique: true,
   },
 });
 

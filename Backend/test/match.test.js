@@ -6,10 +6,12 @@ const api = supertest(app);
 const Player = require("../Models/player-model");
 const Match = require("../Models/match-model");
 const helper = require("./testHelper");
-const expect = require("chai").expect;
 
+const expect = require("chai").expect;
 describe("Match API", () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
+    await Player.deleteMany({});
+    await Match.deleteMany({});
     const passwordHash1 = await bcrypt.hash("secret", 10);
     const passwordHash2 = await bcrypt.hash("secret", 10);
 
@@ -20,7 +22,7 @@ describe("Match API", () => {
     });
 
     const player2 = new Player({
-      name: "pelaaja1",
+      name: "pelaaja2",
       password: passwordHash2,
       sign: "B",
     });
@@ -29,9 +31,9 @@ describe("Match API", () => {
 
     await player2.save();
 
-    const id1 = await Player.findOne({ name: "pelaaja1" }).select(_id);
-    const id2 = await Player.findOne({ name: "pelaaja2" }).select(_id);
-
+    const player1ToSave = await Player.findOne({ name: "pelaaja1" });
+    const player2ToSave = await Player.findOne({ name: "pelaaja2" });
+    console.log(player1ToSave._id);
     const match = new Match({
       name: "peli",
       moves: [
@@ -39,24 +41,24 @@ describe("Match API", () => {
         [2, 1],
       ],
       result: "In Progress",
-      player1: id1,
-      player2: id2,
+      player1: player1ToSave._id,
+      player2: player2ToSave._id,
     });
 
     await match.save();
   });
 
   test("Create new Match", async () => {
-    const playersBefore = await helper.playersFound();
+    const matchesBefore = await helper.whatFound(Match);
 
-    const id1 = await Player.findOne({ name: "pelaaja1" }).select(_id);
-    const id2 = await Player.findOne({ name: "pelaaja2" }).select(_id);
+    const id1 = await Player.findOne({ name: "pelaaja1" }).select("_id");
+    const id2 = await Player.findOne({ name: "pelaaja2" }).select("_id");
 
     const newMatch = {
       name: "matsi",
       moves: [],
-      player1: 1,
-      player2: 2,
+      player1: id1,
+      player2: id2,
     };
 
     await api
@@ -65,42 +67,29 @@ describe("Match API", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    const playersAfter = await helper.playersFound();
-    expect(playersAfter.length).equal(playersBefore.length + 1);
+    const matchesAfter = await helper.whatFound(Match);
+    expect(matchesAfter.length).equal(matchesBefore.length + 1);
 
-    const players = playersAfter.map((p) => p.name);
-    expect(players).contain(newPlayer.name);
+    const matches = matchesAfter.map((p) => p.name);
+    expect(matches).contain(newMatch.name);
   });
 
-  test("Get player by Id", async () => {
-    const playerToFind = await Player.findOne({ name: "root" });
+  test("Update moves", async () => {
+    const matchToFind = await Match.findOne({ name: "matsi" });
 
-    console.log("Player to Find", playerToFind);
-    let id = playerToFind._id;
+    console.log("Player to Find", matchToFind);
+    const id = matchToFind._id;
+    const move = [1, 2];
+    const lastMoveBy = "pelaaja1";
 
     await api
-      .get("/players/id")
-      .send({ id })
+      .get("/matches/id")
+      .send({ id, move, lastMoveBy })
       .expect(201)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
-        expect(res.body.name).equal(playerToFind.name);
-      });
-  });
-
-  test("Get player by name", async () => {
-    const playerToFind = await Player.findOne({ name: "root" });
-
-    console.log("Player to Find", playerToFind);
-    const name = playerToFind.name;
-
-    await api
-      .get("/players/name")
-      .send({ name })
-      .expect(201)
-      .expect("Content-Type", /application\/json/)
-      .expect(function (res) {
-        expect(res.body.id).equal(playerToFind._id.toString());
+        expect(res.body.moves.length).equal(matchToFind.moves.length + 1);
+        expect(res.lastMoveBy).equal(lastMoveBy);
       });
   });
 });

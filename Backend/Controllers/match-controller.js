@@ -3,20 +3,15 @@ const Player = require("../Models/player-model");
 const Match = require("../Models/match-model");
 
 const createMatch = async (req, res) => {
-  const body = req.body;
+  const match = req.body;
+  const player1 = await Player.findById({ _id: match.player1.id });
+  const player2 = await Player.findById({ _id: match.player2.id });
 
-  const player1 = await Player.findById(body.player1Id);
-  const player2 = await Player.findById(body.player2Id);
+  let result = "In Progress";
 
-  let result = "";
-  if (!body.result) {
-    result = "In Progress";
-  } else {
-    result = body.result;
-  }
   const newMatch = new Match({
-    name: body.name,
-    moves: body.moves,
+    name: match.name,
+    moves: match.moves,
     result: result,
     player1: player1._id,
     player2: player2._id,
