@@ -60,7 +60,7 @@ describe("Score API", () => {
 
     await api
       .get("/scores/")
-      .expect(201)
+      .expect(200)
       .expect("Content-Type", /application\/json/);
     expect(function (scores) {
       expect(scores.length).equal(scoresToCompare.length);
@@ -77,7 +77,7 @@ describe("Score API", () => {
     await api
       .get("/scores/players")
       .send({ name: playerToCompare.name })
-      .expect(201)
+      .expect(200)
       .expect("Content-Type", /application\/json/);
     expect(function (player) {
       expect(playerToCompare).equal(player);
@@ -105,7 +105,7 @@ describe("Score API", () => {
 
     await api
       .get("/scores/top")
-      .expect(201)
+      .expect(200)
       .expect("Content-Type", /application\/json/)
       .expect(function (scores) {
         console.log(scores.body);

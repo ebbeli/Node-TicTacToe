@@ -23,7 +23,7 @@ const getPlayerById = async (req, res, next) => {
 
   const player = await Player.findOne({ _id: id }).catch((err) => next(err));
 
-  res.status(201).json(player);
+  res.status(200).json(player);
 };
 
 const getPlayerByName = async (req, res, next) => {
@@ -31,14 +31,14 @@ const getPlayerByName = async (req, res, next) => {
   const { name } = req.body;
   const player = await Player.findOne({ name: name }).catch((err) => next(err));
 
-  res.status(201).json(player);
+  res.status(200).json(player);
 };
 
 const getAll = async (req, res, next) => {
   let players = [];
   players = await Player.find({}).catch((err) => next(err));
 
-  res.status(201).json(players);
+  res.status(200).json(players);
 };
 
 exports.createPlayer = createPlayer;

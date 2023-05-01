@@ -28,7 +28,7 @@ const getAllScores = async (req, res, next) => {
   await Score.find({})
     .populate("player")
     .then((scores) => {
-      res.status(201).json(scores);
+      res.status(200).json(scores);
     })
     .catch((err) => next(err));
 };
@@ -38,7 +38,7 @@ const getByPlayersName = async (req, res, next) => {
   await Player.findOne({ name: body.name })
     .populate("score")
     .then((player) => {
-      res.status(201).json(player.score);
+      res.status(200).json(player.score);
     })
     .catch((err) => next(err));
 };
@@ -49,7 +49,7 @@ const getHighScores = async (req, res, next) => {
     .sort({ wins: -1 })
     .then((scores) => {
       const topFive = scores.slice(0, 5);
-      res.status(201).json(topFive);
+      res.status(200).json(topFive);
     })
     .catch((err) => next(err));
 };

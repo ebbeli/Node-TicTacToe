@@ -42,7 +42,7 @@ const updateMoves = async (req, res, next) => {
 
   const savedMatch = await updatedMatch.save();
 
-  res.status(201).json(savedMatch);
+  res.status(200).json(savedMatch);
 };
 
 const getMoves = async (req, res, next) => {
@@ -52,7 +52,7 @@ const getMoves = async (req, res, next) => {
     .select("moves lastMoveBy")
     .catch((err) => next(err));
 
-  res.status(201).json(foundMoves);
+  res.status(200).json(foundMoves);
 };
 const deleteMatch = async (req, res, next) => {
   const body = req.body;
@@ -82,7 +82,7 @@ const deleteMatch = async (req, res, next) => {
     .catch((err) => next(err));
   console.log(response);
 
-  res.status(201).json(deletedMatch);
+  res.status(200).json(deletedMatch);
 };
 
 const deleteMatchByName = async (req, res, next) => {
@@ -92,7 +92,7 @@ const deleteMatchByName = async (req, res, next) => {
     next(err)
   );
 
-  res.status(201).json(deletedMatch);
+  res.status(200).json(deletedMatch);
 };
 const getPlayers = async (req, res, next) => {
   const { id } = req.body;
@@ -111,7 +111,7 @@ const getPlayers = async (req, res, next) => {
       matchesToReturn.p2 = matches;
     })
     .catch((err) => next(err));
-  res.status(201).json(matchesToReturn);
+  res.status(200).json(matchesToReturn);
 };
 
 exports.create = createMatch;

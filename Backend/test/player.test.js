@@ -48,7 +48,7 @@ describe("Player API", () => {
     await api
       .get("/players/id")
       .send({ id })
-      .expect(201)
+      .expect(200)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
         expect(res.body.name).equal(playerToFind.name);
@@ -65,7 +65,7 @@ describe("Player API", () => {
     await api
       .get("/players/name")
       .send({ name })
-      .expect(201)
+      .expect(200)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
         expect(res.body.id).equal(playerToFind._id.toString());

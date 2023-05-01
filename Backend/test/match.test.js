@@ -82,7 +82,7 @@ describe("Match API", () => {
     await api
       .get("/matches/deleteById")
       .send({ id: match._id })
-      .expect(201)
+      .expect(200)
       .expect("Content-Type", /application\/json/);
 
     const matchesAfter = await helper.whatFound(Match);
@@ -102,7 +102,7 @@ describe("Match API", () => {
     await api
       .put("/matches/update")
       .send({ id, move, lastMoveBy })
-      .expect(201)
+      .expect(200)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
         expect(res.body.moves.length).equal(matchToFind.moves.length + 1);
@@ -115,7 +115,7 @@ describe("Match API", () => {
     await api
       .get("/matches/moves")
       .send({ id: matchToFind._id })
-      .expect(201)
+      .expect(200)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
         expect(res.body.moves.length).equal(matchToFind.moves.length);
@@ -129,7 +129,7 @@ test("'Get players matches", async () => {
   await api
     .get("/matches/players")
     .send({ id: player._id })
-    .expect(201)
+    .expect(200)
     .expect("Content-Type", /application\/json/)
     .expect(function (res) {
       const matches = res.body.p1.concat(res.body.p2);
