@@ -28,8 +28,6 @@ describe("Login API", () => {
   test("Test login", async () => {
     const player = await Player.findOne({ name: "pelaajaTesti" });
 
-    console.log("Player matches to get: ", player);
-
     const playerToken = {
       player: player.name,
       id: player._id,
@@ -45,7 +43,6 @@ describe("Login API", () => {
       .expect(200)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
-        console.log(res);
         expect(String(token)).equal(res.body.token);
       });
   });

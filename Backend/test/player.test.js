@@ -44,10 +44,7 @@ describe("Player API", () => {
 
   test("Get player by Id", async () => {
     const playerToFind = await Player.findOne({ name: "root" });
-
-    console.log("Player to Find", playerToFind);
     let id = playerToFind._id;
-
     await api
       .get("/players/id")
       .send({ id })
@@ -60,8 +57,6 @@ describe("Player API", () => {
 
   test("Get player by name", async () => {
     const playerToFind = await Player.findOne({ name: "root" });
-
-    console.log("Player to Find", playerToFind);
     const name = playerToFind.name;
     const playerByString = await Player.findById({
       _id: "644d44265a49ad575c355ff0",

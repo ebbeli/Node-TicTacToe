@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const Player = require("../Models/player-model");
 
-const createPlayer = async (req, res) => {
+const createPlayer = async (req, res, next) => {
   let { name, password, sign } = req.body;
 
   const salt = 10;
@@ -13,7 +13,7 @@ const createPlayer = async (req, res) => {
     sign,
   });
 
-  const savedPlayer = await player.save();
+  const savedPlayer = await player.save().catch((err) => next(err));
 
   res.status(201).json(savedPlayer);
 };

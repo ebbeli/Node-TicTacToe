@@ -38,14 +38,12 @@ describe("Score API", () => {
 
   test("Create new score", async () => {
     const player = await Player.findOne({ name: "pelaaja1" });
-    console.log(player);
     await api
       .post("/scores/update")
       .send({ id: player._id })
       .expect(201)
       .expect("Content-Type", /application\/json/);
     expect(function (score) {
-      console.log(score);
       expect(score.wins).equal(1);
       expect(score.player).equal(String(player._id));
     });
@@ -60,7 +58,6 @@ describe("Score API", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
     expect(function (score) {
-      console.log(score);
       expect(score.wins).equal(2);
       expect(score.player).equal(String(player._id));
     });
@@ -68,7 +65,6 @@ describe("Score API", () => {
 
   test("Get Scores and populate", async () => {
     const scoresToCompare = await Score.find({});
-    console.log(scoresToCompare);
     const player = await Player.findById({ _id: scoresToCompare[0].player });
 
     await api
@@ -76,7 +72,6 @@ describe("Score API", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
     expect(function (scores) {
-      console.log(score);
       expect(scores.length).equal(scoresToCompare.length);
       expect(scores[0].player.name).equal(player.name);
     });
@@ -88,15 +83,43 @@ describe("Score API", () => {
       .then((player) => {
         playerToCompare = player;
       });
-    console.log(playerToCompare);
     await api
       .get("/scores/players")
       .send({ name: playerToCompare.name })
       .expect(201)
       .expect("Content-Type", /application\/json/);
     expect(function (player) {
-      console.log(player);
       expect(playerToCompare).equal(player);
+    });
+  });
+  test("High score", async () => {
+    const passwordHash = await bcrypt.hash("secret", 10);
+
+    for (let i = 3; i < 7; i++) {
+      const player = new Player({
+        name: "pelaaja" + i,
+        password: passwordHash,
+        matches: [],
+        sign: "A",
+      });
+      const savedPlayer = await player.save();
+
+      const score = new Score({
+        wins: i,
+        player: savedPlayer._id,
+      });
+      const savedScore = await score.save();
+      await Player.updateOne({ _id: player._id }, { score: savedScore._id });
+    }
+
+    await api
+      .get("/scores/top")
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+    expect(function (scores) {
+      expect(scores[0].wins).equal(6);
+      expect(scores[0].player.name).equal("pelaaja6");
+      expect(scores.length).equal(5);
     });
   });
 });

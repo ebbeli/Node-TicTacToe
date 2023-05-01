@@ -17,8 +17,9 @@ const updateScore = async (req, res, next) => {
     });
     savedScore = await score.save();
   }
-  await Player.updateOne({ _id: id }, { score: savedScore._id })
-  .catch((err) => next(err));
+  await Player.updateOne({ _id: id }, { score: savedScore._id }).catch((err) =>
+    next(err)
+  );
 
   res.status(201).json(savedScore);
 };
@@ -57,38 +58,3 @@ exports.update = updateScore;
 exports.getAll = getAllScores;
 exports.players = getByPlayersName;
 exports.highScores = getHighScores;
-/*
-const createScore = async (req, res) => {
-  let body = req.body;
-
-  if (!body.wins) {
-    body.wins = 0;
-  }
-  body.playerId = await Player.findOne({ _id: playerId }).select(_id);
-  let scoreFound = await Score.findOne({ player: body.playerId });
-
-  if (scoreFound) {
-    if (scoreFound.wins < body.wins) {
-      scoreFound.wins = body.wins;
-      scoreFound.save();
-    }
-    res.status(201).json(scoreFound);
-  } else {
-    const newScore = new Score({
-      wins: body.wins,
-      player: body.playerId,
-    });
-
-    const savedScore = await newScore.save();
-
-    res.status(201).json(savedScore);
-  }
-};
-
-const getPlayerScore = async (req, res) => {
-  const { id } = req.body;
-
-  const score = await Score.findById({ player: id });
-
-  res.status(201).json(score);
-};*/

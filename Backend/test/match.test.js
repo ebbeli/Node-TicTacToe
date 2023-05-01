@@ -79,11 +79,9 @@ describe("Match API", () => {
   test("Update moves", async () => {
     const matchToFind = await Match.findOne({ name: "matsi" });
 
-    console.log("Match to Update: ", matchToFind);
     const id = matchToFind._id;
     const move = { x: 1, y: 2 };
     const lastMoveBy = 1;
-    console.log(id, move, lastMoveBy);
 
     await api
       .put("/matches/update")
@@ -91,8 +89,6 @@ describe("Match API", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
-        console.log(res.body.moves);
-        console.log(res.body);
         expect(res.body.moves.length).equal(matchToFind.moves.length + 1);
         expect(res.body.lastMoveBy).equal(lastMoveBy);
       });
@@ -100,16 +96,12 @@ describe("Match API", () => {
 
   test("'Get moves", async () => {
     const matchToFind = await Match.findOne({ name: "matsi" });
-
-    console.log("Matches moves to get: ", matchToFind);
-
     await api
       .get("/matches/moves")
       .send({ id: matchToFind._id })
       .expect(201)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
-        console.log(res.body);
         expect(res.body.moves.length).equal(matchToFind.moves.length);
         expect(res.body.lastMoveBy).equal(matchToFind.lastMoveBy);
       });
@@ -118,9 +110,6 @@ describe("Match API", () => {
 
 test("'Get players matches", async () => {
   const player = await Player.findOne({ name: "pelaaja1" });
-
-  console.log("Player matches to get: ", player);
-
   await api
     .get("/matches/players")
     .send({ id: player._id })
