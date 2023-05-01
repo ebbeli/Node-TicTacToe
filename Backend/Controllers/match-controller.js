@@ -78,24 +78,3 @@ exports.create = createMatch;
 exports.updateMoves = updateMoves;
 exports.getMoves = getMoves;
 exports.getPlayers = getPlayers;
-
-/*
-const getMatchById = async (req, res) => {
-  const { id } = req.body;
-
-  const foundMatch = await Match.findById({ _id: id });
-
-  res.status().json(foundMatch);
-};
-
-const getMatchByName = async (req, res) => {
-  const { name } = req.body;
-
-  const foundMatch = await Match.findOne({ name: name });
-
-  res.status().json(foundMatch);
-};
-
-exports.byId = getMatchById;
-exports.byName = getMatchByName;
-*/
