@@ -17,6 +17,7 @@ const login = async (req, res) => {
   const playerToken = {
     player: player.name,
     id: player._id,
+    sign: player.sign,
   };
 
   const token = jwt.sign(playerToken, "Eino", {

@@ -24,15 +24,7 @@ describe("Score API", () => {
       sign: "A",
     });
 
-    const player2 = new Player({
-      name: "pelaaja2",
-      password: passwordHash,
-      matches: [],
-      sign: "B",
-    });
-
     const savedPlayer1 = await player1.save();
-    const savedPlayer2 = await player2.save();
   });
 
   test("Create new score", async () => {
@@ -94,7 +86,7 @@ describe("Score API", () => {
   test("High score", async () => {
     const passwordHash = await bcrypt.hash("secret", 10);
     let savedPlayer;
-    for (let i = 3; i < 7; i++) {
+    for (let i = 2; i < 8; i++) {
       const player = new Player({
         name: "pelaaja" + i,
         password: passwordHash,
@@ -114,12 +106,14 @@ describe("Score API", () => {
     await api
       .get("/scores/top")
       .expect(201)
-      .expect("Content-Type", /application\/json/);
-    expect(function (scores) {
-      expect(scores[0].wins).equal(6);
-      expect(scores[0].player.name).equal("pelaaja6");
-      expect(scores.length).equal(5);
-    });
+      .expect("Content-Type", /application\/json/)
+      .expect(function (scores) {
+        console.log(scores.body);
+
+        expect(scores.body[0].wins).equal(7);
+        expect(scores.body[0].player.name).equal("pelaaja7");
+        expect(scores.body.length).equal(5);
+      });
   });
 });
 

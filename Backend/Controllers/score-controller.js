@@ -48,7 +48,7 @@ const getHighScores = async (req, res, next) => {
     .populate("player")
     .sort({ wins: -1 })
     .then((scores) => {
-      const topFive = scores.slice(0, 4);
+      const topFive = scores.slice(0, 5);
       res.status(201).json(topFive);
     })
     .catch((err) => next(err));

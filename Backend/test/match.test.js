@@ -13,19 +13,18 @@ describe("Match API", () => {
   beforeAll(async () => {
     await Player.deleteMany({});
     await Match.deleteMany({});
-    const passwordHash1 = await bcrypt.hash("secret", 10);
-    const passwordHash2 = await bcrypt.hash("secret", 10);
+    const passwordHash = await bcrypt.hash("secret", 10);
 
     const player1 = new Player({
       name: "pelaaja1",
-      password: passwordHash1,
+      password: passwordHash,
       matches: [],
       sign: "A",
     });
 
     const player2 = new Player({
       name: "pelaaja2",
-      password: passwordHash2,
+      password: passwordHash,
       matches: [],
       sign: "B",
     });
@@ -53,14 +52,13 @@ describe("Match API", () => {
   test("Create new Match", async () => {
     const matchesBefore = await helper.whatFound(Match);
 
-    const id1 = await Player.findOne({ name: "pelaaja1" }).select("_id");
-    const id2 = await Player.findOne({ name: "pelaaja2" }).select("_id");
+    const player1 = await Player.findOne({ name: "pelaaja1" });
+    const player2 = await Player.findOne({ name: "pelaaja2" });
 
     const newMatch = {
       name: "matsi",
-      moves: [{ x: 2, y: 3 }],
-      player1: id1,
-      player2: id2,
+      player1: player1._id,
+      player2: player2.name,
     };
 
     await api
@@ -74,6 +72,24 @@ describe("Match API", () => {
 
     const matches = matchesAfter.map((p) => p.name);
     expect(matches).contain(newMatch.name);
+  });
+
+  test("Delete Match", async () => {
+    const matchesBefore = await helper.whatFound(Match);
+    const match = await Match.findOne({});
+    console.log(match);
+
+    await api
+      .get("/matches/deleteById")
+      .send({ id: match._id })
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const matchesAfter = await helper.whatFound(Match);
+    expect(matchesAfter.length).equal(matchesBefore.length - 1);
+
+    const matches = matchesAfter.map((p) => p.name);
+    expect(matches).not.contain(match.name);
   });
 
   test("Update moves", async () => {

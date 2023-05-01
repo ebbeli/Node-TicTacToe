@@ -21,7 +21,8 @@ const Login = () => {
         console.log(response.data);
         if (response.data.token) {
           alert("Kirjautuminen onnistui");
-          cookies.set("authorization", response);
+          cookies.set("authorization", response.data.token);
+          localStorage.setItem("Token", response.data.token);
           window.location.replace("/Game");
         }
       })

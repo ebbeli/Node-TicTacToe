@@ -42,7 +42,6 @@ const DropMenu = () => {
         <MenuItem component={Link} to="Login">
           <Typography
             sx={{
-              color: "#154870",
               textAlign: "center",
               fontWeight: "bold",
             }}
@@ -54,7 +53,6 @@ const DropMenu = () => {
         <MenuItem component={Link} to="Register">
           <Typography
             sx={{
-              color: "#154870",
               textAlign: "center",
               fontWeight: "bold",
             }}
@@ -71,7 +69,6 @@ const DropMenu = () => {
           <MenuItem component={Link} to="Logout">
             <Typography
               sx={{
-                color: "#154870",
                 textAlign: "center",
                 fontWeight: "bold",
               }}
@@ -134,7 +131,6 @@ const ResponsiveMenu = () => {
           <MenuItem component={Link} to="Scores" key="highScores">
             <Typography
               sx={{
-                color: "#154870",
                 textAlign: "center",
                 fontWeight: "bold",
               }}
@@ -187,8 +183,6 @@ const Header = ({ foo }) => {
         borderColor: "gray",
         mt: 0,
         marginTop: 0,
-        backgroundColor: "#59595950",
-        backdropFilter: "blur(10px)",
       }}
     >
       <Content />

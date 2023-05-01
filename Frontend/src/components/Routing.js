@@ -1,11 +1,14 @@
 import React from "react";
 import Login from "./LoginPage";
 import Logout from "./Logout";
-import Game from "./Game";
+import Game from "./Games";
+import PlayGame from "./PlayGame";
+import CreateGame from "./CreateGame";
 import Register from "./Register";
 import HighScores from "./HighScores";
 import { Route, Routes } from "react-router-dom";
 import { useState } from "react";
+
 const App = () => {
   const [token, setToken] = useState(null);
   function getCookie(name) {
@@ -45,6 +48,8 @@ const App = () => {
         <Routes>
           <Route path="/*" element={<Logout />} />
           <Route path="/Game" element={<Game />} />
+          <Route path="/Game" element={<CreateGame />} />
+          <Route path="/playGame" element={<PlayGame />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Scores" element={<HighScores />} />
         </Routes>

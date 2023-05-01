@@ -3,14 +3,16 @@ const Match = require("../Models/match-model");
 
 const createMatch = async (req, res) => {
   const match = req.body;
-  const player1 = await Player.findById({ _id: match.player1.id });
-  const player2 = await Player.findById({ _id: match.player2.id });
+  Match.deleteMany({});
+  Player.deleteMany({});
+  const player1 = await Player.findById({ _id: match.player1 });
+  const player2 = await Player.findOne({ name: match.player2 });
 
   let result = "In Progress";
 
   const newMatch = new Match({
     name: match.name,
-    moves: match.moves,
+    moves: [],
     result: result,
     player1: player1._id,
     player2: player2._id,
@@ -52,7 +54,46 @@ const getMoves = async (req, res, next) => {
 
   res.status(201).json(foundMoves);
 };
+const deleteMatch = async (req, res, next) => {
+  const body = req.body;
+  const id = body.id;
 
+  let match = await Match.findOne({ _id: id });
+
+  const deletedMatch = await Match.deleteOne({ _id: id }).catch((err) =>
+    next(err)
+  );
+  console.log(deletedMatch);
+
+  const player1 = await Player.findOne({ _id: match.player1 }).catch((err) =>
+    next(err)
+  );
+
+  const player2 = await Player.findOne({ _id: match.player2 }).catch((err) =>
+    next(err)
+  );
+
+  let response = await player1
+    .updateOne({ $pull: { matches: id } })
+    .catch((err) => next(err));
+  console.log(response);
+  response = await player2
+    .updateOne({ $pull: { matches: id } })
+    .catch((err) => next(err));
+  console.log(response);
+
+  res.status(201).json(deletedMatch);
+};
+
+const deleteMatchByName = async (req, res, next) => {
+  const body = req.body;
+
+  const deletedMatch = await Match.deleteOne({ _id: body.name }).catch((err) =>
+    next(err)
+  );
+
+  res.status(201).json(deletedMatch);
+};
 const getPlayers = async (req, res, next) => {
   const { id } = req.body;
   const matchesToReturn = { p1: [], p2: [] };
@@ -70,7 +111,6 @@ const getPlayers = async (req, res, next) => {
       matchesToReturn.p2 = matches;
     })
     .catch((err) => next(err));
-
   res.status(201).json(matchesToReturn);
 };
 
@@ -78,3 +118,5 @@ exports.create = createMatch;
 exports.updateMoves = updateMoves;
 exports.getMoves = getMoves;
 exports.getPlayers = getPlayers;
+exports.deleteByName = deleteMatchByName;
+exports.deleteById = deleteMatch;
