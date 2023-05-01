@@ -15,19 +15,18 @@ describe("Score API", () => {
     await Score.deleteMany({});
     await Player.deleteMany({});
 
-    const passwordHash1 = await bcrypt.hash("secret", 10);
-    const passwordHash2 = await bcrypt.hash("secret", 10);
+    const passwordHash = await bcrypt.hash("secret", 10);
 
     const player1 = new Player({
       name: "pelaaja1",
-      password: passwordHash1,
+      password: passwordHash,
       matches: [],
       sign: "A",
     });
 
     const player2 = new Player({
       name: "pelaaja2",
-      password: passwordHash2,
+      password: passwordHash,
       matches: [],
       sign: "B",
     });
@@ -94,7 +93,7 @@ describe("Score API", () => {
   });
   test("High score", async () => {
     const passwordHash = await bcrypt.hash("secret", 10);
-
+    let savedPlayer;
     for (let i = 3; i < 7; i++) {
       const player = new Player({
         name: "pelaaja" + i,
@@ -102,7 +101,7 @@ describe("Score API", () => {
         matches: [],
         sign: "A",
       });
-      const savedPlayer = await player.save();
+      savedPlayer = await player.save();
 
       const score = new Score({
         wins: i,

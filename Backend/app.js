@@ -24,7 +24,6 @@ mongoose
   .catch((error) => {
     logger.error("error connecting to db:", error.message);
   });
-
 app.use(cors({ origin: "*" }));
 app.use(express.static("build"));
 app.use(bodyParser.json());

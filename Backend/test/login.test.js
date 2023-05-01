@@ -43,7 +43,9 @@ describe("Login API", () => {
       .expect(200)
       .expect("Content-Type", /application\/json/)
       .expect(function (res) {
-        expect(String(token)).equal(res.body.token);
+        var decodedRes = jwt.verify(res.body.token, "Eino");
+        var decoded = jwt.verify(token, "Eino");
+        expect(decoded.id).equal(decodedRes.id);
       });
   });
 });

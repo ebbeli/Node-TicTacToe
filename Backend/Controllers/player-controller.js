@@ -27,6 +27,7 @@ const getPlayerById = async (req, res, next) => {
 };
 
 const getPlayerByName = async (req, res, next) => {
+  console.log(req.body);
   const { name } = req.body;
   const player = await Player.findOne({ name: name }).catch((err) => next(err));
 
